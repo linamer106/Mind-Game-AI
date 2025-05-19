@@ -8,6 +8,7 @@ public class Game {
   private Difficulty difficulty;
   private int numRounds;
   private String[] options;
+  private int roundNumber = 1;
 
   public Game() {}
 
@@ -20,6 +21,12 @@ public class Game {
   }
 
   public void play() {
+    if (roundNumber <= numRounds) {
+      MessageCli.START_ROUND.printMessage(roundNumber, numRounds);
+      roundNumber++;
+    } else {
+      // show who won
+    }
     // String line = Utils.scanner.nextLine();
   }
 
