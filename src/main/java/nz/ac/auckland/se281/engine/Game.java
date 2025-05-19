@@ -24,6 +24,7 @@ public class Game {
     if (roundNumber <= numRounds) {
       MessageCli.START_ROUND.printMessage(roundNumber, numRounds);
       roundNumber++;
+      MessageCli.ASK_HUMAN_INPUT.printMessage();
     } else {
       // show who won
     }
