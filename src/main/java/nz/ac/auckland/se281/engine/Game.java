@@ -31,22 +31,35 @@ public class Game {
   public void play() {
     if (roundNumber <= numRounds) {
       MessageCli.START_ROUND.printMessage(roundNumber, numRounds);
-      MessageCli.ASK_HUMAN_INPUT.printMessage();
-      String input = Utils.scanner.nextLine();
       List<Colour> inputColours = new ArrayList<>();
-      String[] parts = input.trim().split(" ");
-      for (String part : parts) {
-        Colour colour = Colour.fromInput(part);
-        if (colour == null) {
+
+      while (true) {
+        MessageCli.ASK_HUMAN_INPUT.printMessage();
+        String input = Utils.scanner.nextLine();
+        String[] parts = input.trim().split(" ");
+        if (parts.length != 2) { // how different from using while here?
           MessageCli.INVALID_HUMAN_INPUT.printMessage();
-          return;
+          continue;
         }
-        inputColours.add(colour);
+        Colour colour1 = Colour.fromInput(parts[0]);
+        Colour colour2 = Colour.fromInput(parts[1]);
+        if (colour1 == null || colour2 == null) {
+          MessageCli.INVALID_HUMAN_INPUT.printMessage();
+          continue;
+        }
+        // could List.of() here produce me issues later due to nullpointerexception and modification
+        // stuff?
+        inputColours.add(colour1);
+        inputColours.add(colour2);
+        break;
       }
+
       roundNumber++;
+      if (roundNumber % 3 == 0) {
+        MessageCli.PRINT_POWER_COLOUR.printMessage(
+            Colour.getRandomColourForPowerColour()); // why can't do model.Colour?
+      }
       MessageCli.PRINT_INFO_MOVE.printMessage(options[0], inputColours.get(0), inputColours.get(1));
-    } else {
-      // show who won
     }
   }
 
