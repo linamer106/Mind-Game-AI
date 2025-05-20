@@ -53,12 +53,12 @@ public class MainTest {
     @Test
     public void T1_03_play_second_round() throws Exception {
       runCommands(
-        NEW_GAME + " EASY 6",
-        "Valerio", //
-        PLAY,
-        "RED GREEN", //
-        PLAY,
-        "BLUE YELLOW");
+          NEW_GAME + " EASY 6",
+          "Valerio", //
+          PLAY,
+          "RED GREEN", //
+          PLAY,
+          "BLUE YELLOW");
       assertContains(START_ROUND.getMessage("1", "6"));
       assertContains(START_ROUND.getMessage("2", "6"));
       assertDoesNotContain(START_ROUND.getMessage("3", "6"));

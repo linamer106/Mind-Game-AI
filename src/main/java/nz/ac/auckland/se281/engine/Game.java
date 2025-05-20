@@ -1,5 +1,7 @@
 package nz.ac.auckland.se281.engine;
 
+import java.util.ArrayList;
+import java.util.List;
 import nz.ac.auckland.se281.Main.Difficulty;
 import nz.ac.auckland.se281.cli.MessageCli;
 import nz.ac.auckland.se281.cli.Utils;
@@ -12,7 +14,7 @@ public class Game {
   private String[] options;
   private int roundNumber = 1;
   private String input;
-  private Colour inputColour;
+  private Colour inputColours;
 
   public Game() {}
 
@@ -47,10 +49,15 @@ public class Game {
       MessageCli.START_ROUND.printMessage(roundNumber, numRounds);
       MessageCli.ASK_HUMAN_INPUT.printMessage();
       String input = Utils.scanner.nextLine();
-      inputColour = Colour.fromInput(input);
-      if (inputColour == null) {
-        MessageCli.INVALID_HUMAN_INPUT.printMessage();
-        return;
+      List<Colour> inputColours = new ArrayList<>();
+      String[] parts = input.trim().split(" ");
+      for (String part : parts) {
+        Colour colour = Colour.fromInput(part);
+        if (colour == null) {
+          MessageCli.INVALID_HUMAN_INPUT.printMessage();
+          return;
+        }
+        inputColours.add(colour);
       }
       roundNumber++;
 
