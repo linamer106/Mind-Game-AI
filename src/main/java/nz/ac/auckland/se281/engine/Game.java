@@ -15,34 +15,18 @@ public class Game {
   private int roundNumber = 1;
   private String input;
   private Colour inputColours;
+  String namePlayer;
 
   public Game() {}
 
-  public void newGame(Difficulty difficulty, int numRounds, String[] options) {
+  public void newGame(
+      Difficulty difficulty, int numRounds, String[] options) { // what is in string options?
     this.difficulty = difficulty;
     this.numRounds = numRounds;
     this.options = options;
-    String namePlayer = options[0];
+    this.namePlayer = options[0];
     MessageCli.WELCOME_PLAYER.printMessage(namePlayer);
   }
-
-  // public void play() {
-  //   if (roundNumber <= numRounds) {
-  //     MessageCli.START_ROUND.printMessage(roundNumber, numRounds);
-  //     roundNumber++;
-  //     MessageCli.ASK_HUMAN_INPUT.printMessage();
-  //     String input = Utils.scanner.nextLine();
-  //     inputColour = Colour.fromInput(input);
-  //     if (inputColour == null) {
-  //       MessageCli.INVALID_HUMAN_INPUT.printMessage();
-  //           roundNumber--;
-  //       return;
-  //     }
-
-  //   } else {
-  //     // show who won
-  //   }
-  // }
 
   public void play() {
     if (roundNumber <= numRounds) {
@@ -60,7 +44,7 @@ public class Game {
         inputColours.add(colour);
       }
       roundNumber++;
-
+      MessageCli.PRINT_INFO_MOVE.printMessage(options[0], inputColours.get(0), inputColours.get(1));
     } else {
       // show who won
     }
