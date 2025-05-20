@@ -54,11 +54,11 @@ public class Game {
         break;
       }
 
-      roundNumber++;
       if (roundNumber % 3 == 0) {
         MessageCli.PRINT_POWER_COLOUR.printMessage(
             Colour.getRandomColourForPowerColour()); // why can't do model.Colour?
       }
+      roundNumber++;
       MessageCli.PRINT_INFO_MOVE.printMessage(options[0], inputColours.get(0), inputColours.get(1));
     }
   }
