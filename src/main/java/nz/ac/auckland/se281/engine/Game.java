@@ -15,7 +15,9 @@ public class Game {
   private int roundNumber = 1;
   private String input;
   private Colour inputColours;
-  String namePlayer;
+  private String namePlayer;
+  public Strategy gameStrategy;
+  private DifficultyLevel gameLevel;
 
   public Game() {}
 
@@ -26,6 +28,7 @@ public class Game {
     this.options = options;
     this.namePlayer = options[0];
     MessageCli.WELCOME_PLAYER.printMessage(namePlayer);
+    gameLevel = GameFactory.chooseGameDifficulty(difficulty);
   }
 
   public void play() {
@@ -47,13 +50,16 @@ public class Game {
           MessageCli.INVALID_HUMAN_INPUT.printMessage();
           continue;
         }
-        // could List.of() here produce me issues later due to nullpointerexception and modification
+        // could List.of() here produce me issues later due to nullpointerexception and mod
         // stuff?
         inputColours.add(colour1);
         inputColours.add(colour2);
         break;
       }
-
+      ////////
+      gameLevel.setStrategy(new RandomStrategy());
+      ///
+      ///
       if (roundNumber % 3 == 0) {
         MessageCli.PRINT_POWER_COLOUR.printMessage(
             Colour.getRandomColourForPowerColour()); // why can't do model.Colour?
@@ -65,3 +71,4 @@ public class Game {
 
   public void showStats() {}
 }
+////      easyGame.gameStrategy(new leastsakdjasd)

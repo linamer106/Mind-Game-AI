@@ -1,21 +1,24 @@
 package nz.ac.auckland.se281.engine;
 
-public class GameFactory { // need an interface of the methods they all implement?
+import nz.ac.auckland.se281.Main.Difficulty;
 
-  // public static Game chooseGameDifficulty(String response) { // ok  that it's type Game?
+public class GameFactory {
 
-  //   if (response.equals(/*easy game*/ )) {
+  public static DifficultyLevel chooseGameDifficulty(
+      Difficulty difficulty) { // ok  that it's type Game?
 
-  //     // EspressoCoffee espressoCoffee = new EspressoCoffee();
-  //     // return espressoCoffee;
+    if (difficulty.equals(Difficulty.EASY)) {
+      DifficultyLevel easyGame = new EasyGame(); // ignore case
+      return easyGame;
 
-  //   } else if (response.equals(/*medium game */ )) {
-  //     // AmericanoCoffee americanoCoffee = new AmericanoCoffee();
-  //     // return americanoCoffee;
+    } else if (difficulty.equals(Difficulty.MEDIUM)) {
+      DifficultyLevel mediumGame = new MediumGame();
+      return mediumGame;
 
-  //   } else if (response.equals(/*hard game*/ )) {
-  //     // Cappuccino cappuccinoCoffee = new Cappuccino();
-  //     // return cappuccinoCoffee;
-  //   }
-  // }
+    } else if (difficulty.equals(Difficulty.HARD)) {
+      DifficultyLevel hardGame = new HardGame();
+      return hardGame;
+    }
+    return null;
+  }
 }
