@@ -57,7 +57,6 @@ public class Game {
 
     if (roundNumber > numRounds) {
       endGame();
-      MessageCli.GAME_OVER.printMessage();
       return;
     }
 
