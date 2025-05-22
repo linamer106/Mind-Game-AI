@@ -13,7 +13,6 @@ public class Game {
   private int numRounds;
   private String[] options;
   private int roundNumber = 1;
-  private String input;
   private Colour humanChoice;
   private Colour humanGuess;
   private String namePlayer;
@@ -27,6 +26,9 @@ public class Game {
   private Colour lastHumanChoice = null;
   private Colour powerColour = null;
   private boolean strategyChangedThisRound = false;
+
+  private List<Integer> playerPointsPerRound = new ArrayList<>();
+  private List<Integer> aiPointsPerRound = new ArrayList<>();
 
   public Game() {}
 
@@ -61,47 +63,41 @@ public class Game {
       return;
     }
 
-    if (roundNumber <= numRounds) {
-      MessageCli.START_ROUND.printMessage(roundNumber, numRounds);
-      List<Colour> inputColours = getHumanInput();
+    MessageCli.START_ROUND.printMessage(roundNumber, numRounds);
+    List<Colour> inputColours = getHumanInput();
 
-      if (inputColours == null) {
-        return; // purpose of this?
-      }
+    humanChoice = inputColours.get(0);
+    humanGuess = inputColours.get(1);
+    humanChoiceHistory.add(humanChoice);
 
-      humanChoice = inputColours.get(0);
-      humanGuess = inputColours.get(1);
-      humanChoiceHistory.add(humanChoice);
+    updateStrategy();
 
-      updateStrategy();
+    Colour aiChoice = currentStrategy.chooseColour();
+    Colour aiGuess = currentStrategy.guessHumanColour();
 
-      Colour aiChoice = currentStrategy.chooseColour();
-      Colour aiGuess = currentStrategy.guessHumanColour();
+    // print ai and player choices and guesses
+    MessageCli.PRINT_INFO_MOVE.printMessage(AI_NAME, aiChoice, aiGuess);
+    MessageCli.PRINT_INFO_MOVE.printMessage(namePlayer, humanChoice, humanGuess);
 
-      // print ai and player choices and guesses
-      MessageCli.PRINT_INFO_MOVE.printMessage(AI_NAME, aiChoice, aiGuess);
-      MessageCli.PRINT_INFO_MOVE.printMessage(namePlayer, humanChoice, humanGuess);
+    if (roundNumber % 3 == 0) {
+      powerColour = Colour.getRandomColourForPowerColour();
+      MessageCli.PRINT_POWER_COLOUR.printMessage(powerColour); // why can't do model.Colour?
+    }
 
-      if (roundNumber % 3 == 0) {
-        MessageCli.PRINT_POWER_COLOUR.printMessage(
-            Colour.getRandomColourForPowerColour()); // why can't do model.Colour?
-      }
+    calculatePoints(humanChoice, humanGuess, aiChoice, aiGuess);
 
-      calculatePoints(humanChoice, humanGuess, aiChoice, aiGuess);
+    // Print round outcome
+    MessageCli.PRINT_OUTCOME_ROUND.printMessage(
+        namePlayer, playerPoints - getPreviousPlayerPoints());
+    MessageCli.PRINT_OUTCOME_ROUND.printMessage(AI_NAME, aiPoints - getPreviousAiPoints());
 
-      // Print round outcome
-      MessageCli.PRINT_OUTCOME_ROUND.printMessage(
-          namePlayer, playerPoints - getPreviousPlayerPoints());
-      MessageCli.PRINT_OUTCOME_ROUND.printMessage(AI_NAME, aiPoints - getPreviousAiPoints());
+    // Update for next round
+    lastHumanChoice = humanChoice;
+    roundNumber++;
 
-      // Update for next round
-      lastHumanChoice = humanChoice;
-      roundNumber++;
-
-      // Check if game ended
-      if (roundNumber > numRounds) { // why again can i combine?
-        endGame();
-      }
+    // Check if game ended
+    if (roundNumber > numRounds) { // why again can i combine?
+      endGame();
     }
   }
 
@@ -147,6 +143,8 @@ public class Game {
 
   private void updateStrategy() {
     switch (difficulty) {
+      case EASY:
+        return; // no strategy change
       case MEDIUM:
         if (roundNumber == 2) {
           currentStrategy = new AvoidLastStrategy(humanChoice);
@@ -176,36 +174,64 @@ public class Game {
   }
 
   private int getPreviousPlayerPoints() {
-    return playerPoints - (roundNumber > 1 ? (playerPoints - getPreviousPlayerPoints()) : 0);
-  } // confused here?????????????
+    if (roundNumber <= 1) {
+      return 0; // No previous rounds before round 1
+    }
+    // Sum all points except current round
+    int sum = 0;
+    for (int i = 0; i < playerPointsPerRound.size() - 1; i++) {
+      sum += playerPointsPerRound.get(i);
+    }
+    return sum;
+  }
 
   private int getPreviousAiPoints() {
-    return aiPoints - (roundNumber > 1 ? (aiPoints - getPreviousAiPoints()) : 0);
+    if (roundNumber <= 1) {
+      return 0;
+    }
+    int sum = 0;
+    for (int i = 0; i < aiPointsPerRound.size() - 1; i++) {
+      sum += aiPointsPerRound.get(i);
+    }
+    return sum;
   }
 
   private void calculatePoints(
       Colour humanChoice, Colour humanGuess, Colour aiChoice, Colour aiGuess) {
     // Calculate player points
-    int playerRoundPoints = 0; // this inside so how will it add up correctly??
+    int playerRoundPoints = 0;
     if (humanGuess == aiChoice) {
       playerRoundPoints = 1;
       if (powerColour != null && humanGuess == powerColour) {
         playerRoundPoints += 2;
       }
     }
-    playerPoints += playerRoundPoints;
 
     // Calculate AI points
-    int aiRoundPoints = 0; // same Q here?
+    int aiRoundPoints = 0;
     if (aiGuess == humanChoice) {
       aiRoundPoints = 1;
       if (powerColour != null && aiGuess == powerColour) {
         aiRoundPoints += 2;
       }
     }
+
+    // Store the points for this round
+    playerPointsPerRound.add(playerRoundPoints);
+    aiPointsPerRound.add(aiRoundPoints);
+
+    // Update total points
+    playerPoints += playerRoundPoints;
     aiPoints += aiRoundPoints;
   }
 
-  public void showStats() {}
+  public void showStats() {
+    if (!gameStarted) {
+      MessageCli.GAME_NOT_STARTED.printMessage();
+      return;
+    }
+    MessageCli.PRINT_PLAYER_POINTS.printMessage(namePlayer, playerPoints);
+    MessageCli.PRINT_PLAYER_POINTS.printMessage(AI_NAME, aiPoints);
+  }
 }
 ////      easyGame.gameStrategy(new leastsakdjasd)
