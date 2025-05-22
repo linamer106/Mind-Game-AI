@@ -4,7 +4,7 @@ import java.util.List;
 import nz.ac.auckland.se281.model.Colour;
 
 public class LeastUsedStrategy implements Strategy {
-  List<Colour> humanGuesses;
+  private List<Colour> humanGuesses;
 
   public LeastUsedStrategy(List<Colour> humanGuesses) {
     this.humanGuesses = humanGuesses;
@@ -17,6 +17,10 @@ public class LeastUsedStrategy implements Strategy {
 
   @Override
   public Colour guessHumanColour() {
+
+    if (humanGuesses.isEmpty()) {
+      return Colour.getRandomColourForAi();
+    }
 
     int[] counts = new int[Colour.values().length];
 

@@ -5,7 +5,7 @@ import nz.ac.auckland.se281.Main.Difficulty;
 public class GameFactory {
 
   public static DifficultyLevel chooseGameDifficulty(
-      Difficulty difficulty) { // ok  that it's type Game?
+      Difficulty difficulty) { // could be given lower vs upper case?
 
     if (difficulty.equals(Difficulty.EASY)) {
       DifficultyLevel easyGame = new EasyGame(); // ignore case

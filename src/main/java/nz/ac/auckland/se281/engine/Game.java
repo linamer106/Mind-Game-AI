@@ -16,8 +16,16 @@ public class Game {
   private String input;
   private Colour inputColours;
   private String namePlayer;
-  public Strategy gameStrategy;
+  private Strategy currentStrategy; // ok to be public?
   private DifficultyLevel gameLevel;
+
+  private boolean gameStarted = false;
+  private int playerPoints = 0;
+  private int aiPoints = 0;
+  private List<Colour> humanGuesses = new ArrayList<>();
+  private Colour lastHumanGuess = null;
+  private Colour powerColour = null;
+  private boolean startegyChangedThisRound = false;
 
   public Game() {}
 
@@ -27,11 +35,32 @@ public class Game {
     this.numRounds = numRounds;
     this.options = options;
     this.namePlayer = options[0];
+    this.roundNumber = 1;
+    this.playerPoints = 0;
+    this.aiPoints = 0;
+    this.humanGuesses.clear();
+    this.lastHumanGuess = null;
+    this.powerColour = null;
+    this.gameStarted = true;
+
     MessageCli.WELCOME_PLAYER.printMessage(namePlayer);
     gameLevel = GameFactory.chooseGameDifficulty(difficulty);
+    currentStrategy = new RandomStrategy(); // ok logic? or must keep original one ai?
+    gameLevel.setStrategy(currentStrategy);
   }
 
   public void play() {
+    if (!gameStarted) {
+      MessageCli.GAME_NOT_STARTED.printMessage();
+      return;
+    }
+
+    if (roundNumber > numRounds) {
+      endGame();
+      MessageCli.GAME_OVER.printMessage();
+      return;
+    }
+
     if (roundNumber <= numRounds) {
       MessageCli.START_ROUND.printMessage(roundNumber, numRounds);
       List<Colour> inputColours = new ArrayList<>();
@@ -67,6 +96,21 @@ public class Game {
       roundNumber++;
       MessageCli.PRINT_INFO_MOVE.printMessage(options[0], inputColours.get(0), inputColours.get(1));
     }
+  }
+
+  private void endGame() {
+    showStats();
+    MessageCli.PRINT_END_GAME.printMessage();
+
+    if (playerPoints > aiPoints) {
+      MessageCli.PRINT_WINNER_GAME.printMessage(namePlayer);
+    } else if (aiPoints > playerPoints) {
+      MessageCli.PRINT_WINNER_GAME.printMessage(AI_NAME);
+    } else {
+      MessageCli.PRINT_TIE_GAME.printMessage();
+    }
+
+    gameStarted = false;
   }
 
   public void showStats() {}

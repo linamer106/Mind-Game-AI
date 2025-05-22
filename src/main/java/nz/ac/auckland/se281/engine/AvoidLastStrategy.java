@@ -18,6 +18,9 @@ public class AvoidLastStrategy implements Strategy {
 
   @Override
   public Colour guessHumanColour() {
+    if (exclude == null) { // when would this be null?
+      return Colour.getRandomColourForAi();
+    }
     return Colour.getRandomColourExcluding(exclude);
   }
 }
