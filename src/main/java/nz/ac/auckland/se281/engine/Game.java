@@ -25,7 +25,7 @@ public class Game {
   private List<Colour> humanChoiceHistory = new ArrayList<>();
   private Colour lastHumanGuess = null;
   private Colour powerColour = null;
-  private boolean startegyChangedThisRound = false;
+  private boolean strategyChangedThisRound = false;
 
   public Game() {}
 
@@ -131,34 +131,42 @@ public class Game {
   }
 
   // private void updateStrategy() {
-  //       switch (difficulty) {
-  //           case MEDIUM:
-  //               if (roundNumber == 2) {
-  //                   currentStrategy = new AvoidLastStrategy(lastHumanGuess);
-  //                   gameLevel.setStrategy(currentStrategy);
-  //               }
-  //               break;
-  //           case HARD:
-  //               if (roundNumber == 3) {
-  //                   currentStrategy = new LeastUsedStrategy(humanChoices);
-  //                   gameLevel.setStrategy(currentStrategy);
-  //                   strategyChangedThisRound = true;
-  //               } else if (roundNumber >= 4 && !strategyChangedThisRound) {
-  //                   // Switch strategy if lost last round
-  //                   int lastRoundAiPoints = aiPoints - getPreviousAiPoints();
-  //                   if (lastRoundAiPoints == 0) {
-  //                       if (currentStrategy instanceof LeastUsedStrategy) {
-  //                           currentStrategy = new AvoidLastStrategy(lastHumanGuess);
-  //                       } else {
-  //                           currentStrategy = new LeastUsedStrategy(humanChoices);
-  //                       }
-  //                       gameLevel.setStrategy(currentStrategy);
-  //                   }
-  //               }
-  //               strategyChangedThisRound = false;
-  //               break;
+  //   switch (difficulty) {
+  //     case MEDIUM:
+  //       if (roundNumber == 2) {
+  //         currentStrategy = new AvoidLastStrategy(humanColourChoice);
+  //         gameLevel.setStrategy(currentStrategy);
   //       }
+  //       break;
+  //     case HARD:
+  //       if (roundNumber == 3) {
+  //         currentStrategy = new LeastUsedStrategy(humanChoiceHistory);
+  //         gameLevel.setStrategy(currentStrategy);
+  //         strategyChangedThisRound = true;
+  //       } else if (roundNumber >= 4 && !strategyChangedThisRound) {
+  //         // Switch strategy if lost last round
+  //         int lastRoundAiPoints = aiPoints - getPreviousAiPoints();
+  //         if (lastRoundAiPoints == 0) {
+  //           if (currentStrategy instanceof LeastUsedStrategy) {
+  //             currentStrategy = new AvoidLastStrategy(humanColourChoice);
+  //           } else {
+  //             currentStrategy = new LeastUsedStrategy(humanChoiceHistory);
+  //           }
+  //           gameLevel.setStrategy(currentStrategy);
+  //         }
+  //       }
+  //       strategyChangedThisRound = false;
+  //       break;
   //   }
+  // }
+
+  private int getPreviousPlayerPoints() {
+    return playerPoints - (roundNumber > 1 ? (playerPoints - getPreviousPlayerPoints()) : 0);
+  } // confused here?????????????
+
+  private int getPreviousAiPoints() {
+    return aiPoints - (roundNumber > 1 ? (aiPoints - getPreviousAiPoints()) : 0);
+  }
 
   public void showStats() {}
 }
