@@ -4,10 +4,10 @@ import java.util.List;
 import nz.ac.auckland.se281.model.Colour;
 
 public class LeastUsedStrategy implements Strategy {
-  private List<Colour> humanGuesses;
+  private List<Colour> humanChoiceHistory;
 
-  public LeastUsedStrategy(List<Colour> humanGuesses) {
-    this.humanGuesses = humanGuesses;
+  public LeastUsedStrategy(List<Colour> humanChoiceHistory) {
+    this.humanChoiceHistory = humanChoiceHistory;
   }
 
   @Override
@@ -18,14 +18,14 @@ public class LeastUsedStrategy implements Strategy {
   @Override
   public Colour guessHumanColour() {
 
-    if (humanGuesses.isEmpty()) {
+    if (humanChoiceHistory.isEmpty()) {
       return Colour.getRandomColourForAi();
     }
 
     int[] counts = new int[Colour.values().length];
 
     // Count how many times each colour appears
-    for (Colour guess : humanGuesses) {
+    for (Colour guess : humanChoiceHistory) {
       counts[guess.ordinal()]++;
     }
 

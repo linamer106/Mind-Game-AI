@@ -14,7 +14,7 @@ public class Game {
   private String[] options;
   private int roundNumber = 1;
   private String input;
-  private Colour inputColours;
+  private Colour humanColourChoice;
   private String namePlayer;
   private Strategy currentStrategy; // ok to be public?
   private DifficultyLevel gameLevel;
@@ -22,7 +22,7 @@ public class Game {
   private boolean gameStarted = false;
   private int playerPoints = 0;
   private int aiPoints = 0;
-  private List<Colour> humanGuesses = new ArrayList<>();
+  private List<Colour> humanChoiceHistory = new ArrayList<>();
   private Colour lastHumanGuess = null;
   private Colour powerColour = null;
   private boolean startegyChangedThisRound = false;
@@ -38,7 +38,7 @@ public class Game {
     this.roundNumber = 1;
     this.playerPoints = 0;
     this.aiPoints = 0;
-    this.humanGuesses.clear();
+    this.humanChoiceHistory.clear();
     this.lastHumanGuess = null;
     this.powerColour = null;
     this.gameStarted = true;
@@ -62,28 +62,16 @@ public class Game {
 
     if (roundNumber <= numRounds) {
       MessageCli.START_ROUND.printMessage(roundNumber, numRounds);
-      List<Colour> inputColours = new ArrayList<>();
+      List<Colour> inputColours = getHumanInput();
 
-      while (true) {
-        MessageCli.ASK_HUMAN_INPUT.printMessage();
-        String input = Utils.scanner.nextLine();
-        String[] parts = input.trim().split(" ");
-        if (parts.length != 2) { // how different from using while here?
-          MessageCli.INVALID_HUMAN_INPUT.printMessage();
-          continue;
-        }
-        Colour colour1 = Colour.fromInput(parts[0]);
-        Colour colour2 = Colour.fromInput(parts[1]);
-        if (colour1 == null || colour2 == null) {
-          MessageCli.INVALID_HUMAN_INPUT.printMessage();
-          continue;
-        }
-        // could List.of() here produce me issues later due to nullpointerexception and mod
-        // stuff?
-        inputColours.add(colour1);
-        inputColours.add(colour2);
-        break;
+      if (inputColours == null) {
+        return; // purpose of this?
       }
+
+      humanColourChoice = inputColours.get(0);
+      lastHumanGuess = inputColours.get(1);
+      humanChoiceHistory.add(humanColourChoice);
+
       ////////
       gameLevel.setStrategy(new RandomStrategy());
       ///
