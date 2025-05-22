@@ -8,7 +8,7 @@ import nz.ac.auckland.se281.cli.Utils;
 import nz.ac.auckland.se281.model.Colour;
 
 public class Game {
-  public static String AI_NAME = "HAL-9000";
+  public static final String AI_NAME = "HAL-9000";
   private Difficulty difficulty;
   private int numRounds;
   private String[] options;
@@ -70,7 +70,7 @@ public class Game {
     humanGuess = inputColours.get(1);
 
     updateStrategy();
-    humanChoiceHistory.add(humanChoice);
+    humanChoiceHistory.add(humanChoice); // or needs to be above that line above?
 
     Colour aiChoice = currentStrategy.chooseColour();
     Colour aiGuess = currentStrategy.guessHumanColour();
@@ -147,8 +147,11 @@ public class Game {
       case EASY:
         return; // no strategy change
       case MEDIUM:
-        if (roundNumber >= 2) { // so the humanChoice chnages every time, corect implementation?
-          currentStrategy = new AvoidLastStrategy(humanChoice);
+        if (roundNumber
+            >= 2) { // so the humanChoice chnages every time, corect implementation right? not just
+          // ==2
+          currentStrategy =
+              new AvoidLastStrategy(humanChoiceHistory.get(humanChoiceHistory.size() - 1));
           gameLevel.setStrategy(currentStrategy);
         }
         break;
@@ -175,8 +178,8 @@ public class Game {
               break;
             }
           }
+          gameLevel.setStrategy(currentStrategy);
         }
-        gameLevel.setStrategy(currentStrategy);
         break;
     }
   }

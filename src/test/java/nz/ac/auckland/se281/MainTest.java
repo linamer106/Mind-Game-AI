@@ -94,7 +94,8 @@ public class MainTest {
           NEW_GAME + " EASY 3",
           "Valerio", //
           PLAY,
-          "rrr rrrr", "G B");
+          "rrr rrrr",
+          "G B");
       assertContains(ASK_HUMAN_INPUT.getMessage());
     }
 
