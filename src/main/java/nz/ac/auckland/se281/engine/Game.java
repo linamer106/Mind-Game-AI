@@ -14,7 +14,8 @@ public class Game {
   private String[] options;
   private int roundNumber = 1;
   private String input;
-  private Colour humanColourChoice;
+  private Colour humanChoice;
+  private Colour humanGuess;
   private String namePlayer;
   private Strategy currentStrategy; // ok to be public?
   private DifficultyLevel gameLevel;
@@ -23,7 +24,7 @@ public class Game {
   private int playerPoints = 0;
   private int aiPoints = 0;
   private List<Colour> humanChoiceHistory = new ArrayList<>();
-  private Colour lastHumanGuess = null;
+  private Colour lastHumanChoice = null;
   private Colour powerColour = null;
   private boolean strategyChangedThisRound = false;
 
@@ -39,7 +40,7 @@ public class Game {
     this.playerPoints = 0;
     this.aiPoints = 0;
     this.humanChoiceHistory.clear();
-    this.lastHumanGuess = null;
+    this.lastHumanChoice = null;
     this.powerColour = null;
     this.gameStarted = true;
 
@@ -68,25 +69,39 @@ public class Game {
         return; // purpose of this?
       }
 
-      humanColourChoice = inputColours.get(0);
-      lastHumanGuess = inputColours.get(1);
-      humanChoiceHistory.add(humanColourChoice);
+      humanChoice = inputColours.get(0);
+      humanGuess = inputColours.get(1);
+      humanChoiceHistory.add(humanChoice);
 
-      // updateStrategy();
+      updateStrategy();
 
       Colour aiChoice = currentStrategy.chooseColour();
       Colour aiGuess = currentStrategy.guessHumanColour();
 
       // print ai and player choices and guesses
       MessageCli.PRINT_INFO_MOVE.printMessage(AI_NAME, aiChoice, aiGuess);
-      MessageCli.PRINT_INFO_MOVE.printMessage(namePlayer, humanColourChoice, lastHumanGuess);
+      MessageCli.PRINT_INFO_MOVE.printMessage(namePlayer, humanChoice, humanGuess);
 
       if (roundNumber % 3 == 0) {
         MessageCli.PRINT_POWER_COLOUR.printMessage(
             Colour.getRandomColourForPowerColour()); // why can't do model.Colour?
       }
+
+      calculatePoints(humanChoice, humanGuess, aiChoice, aiGuess);
+
+      // Print round outcome
+      MessageCli.PRINT_OUTCOME_ROUND.printMessage(
+          namePlayer, playerPoints - getPreviousPlayerPoints());
+      MessageCli.PRINT_OUTCOME_ROUND.printMessage(AI_NAME, aiPoints - getPreviousAiPoints());
+
+      // Update for next round
+      lastHumanChoice = humanChoice;
       roundNumber++;
-      MessageCli.PRINT_INFO_MOVE.printMessage(options[0], inputColours.get(0), inputColours.get(1));
+
+      // Check if game ended
+      if (roundNumber > numRounds) { // why again can i combine?
+        endGame();
+      }
     }
   }
 
@@ -134,7 +149,7 @@ public class Game {
     switch (difficulty) {
       case MEDIUM:
         if (roundNumber == 2) {
-          currentStrategy = new AvoidLastStrategy(humanColourChoice);
+          currentStrategy = new AvoidLastStrategy(humanChoice);
           gameLevel.setStrategy(currentStrategy);
         }
         break;
@@ -148,7 +163,7 @@ public class Game {
           int lastRoundAiPoints = aiPoints - getPreviousAiPoints();
           if (lastRoundAiPoints == 0) {
             if (currentStrategy instanceof LeastUsedStrategy) {
-              currentStrategy = new AvoidLastStrategy(humanColourChoice);
+              currentStrategy = new AvoidLastStrategy(lastHumanChoice);
             } else {
               currentStrategy = new LeastUsedStrategy(humanChoiceHistory);
             }
@@ -169,12 +184,12 @@ public class Game {
   }
 
   private void calculatePoints(
-      Colour humanColourChoice, Colour lastHumanGuess, Colour aiChoice, Colour aiGuess) {
+      Colour humanChoice, Colour humanGuess, Colour aiChoice, Colour aiGuess) {
     // Calculate player points
     int playerRoundPoints = 0; // this inside so how will it add up correctly??
-    if (lastHumanGuess == aiChoice) {
+    if (humanGuess == aiChoice) {
       playerRoundPoints = 1;
-      if (powerColour != null && lastHumanGuess == powerColour) {
+      if (powerColour != null && humanGuess == powerColour) {
         playerRoundPoints += 2;
       }
     }
@@ -182,7 +197,7 @@ public class Game {
 
     // Calculate AI points
     int aiRoundPoints = 0; // same Q here?
-    if (aiGuess == humanColourChoice) {
+    if (aiGuess == humanChoice) {
       aiRoundPoints = 1;
       if (powerColour != null && aiGuess == powerColour) {
         aiRoundPoints += 2;
