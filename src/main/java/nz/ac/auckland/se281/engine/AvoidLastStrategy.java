@@ -3,16 +3,21 @@ package nz.ac.auckland.se281.engine;
 import nz.ac.auckland.se281.model.Colour;
 
 public class AvoidLastStrategy implements Strategy {
+  private Colour exclude;
+
+  // how to get this exclude colour?
+
+  public AvoidLastStrategy(Colour exclude) {
+    this.exclude = exclude;
+  }
 
   @Override
   public Colour chooseColour() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'chooseColour'");
+    return Colour.getRandomColourForAi();
   }
 
   @Override
   public Colour guessHumanColour() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'guessHumanColour'");
+    return Colour.getRandomColourExcluding(exclude);
   }
 }

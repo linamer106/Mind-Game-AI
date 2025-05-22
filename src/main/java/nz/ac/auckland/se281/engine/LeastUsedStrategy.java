@@ -1,30 +1,38 @@
 package nz.ac.auckland.se281.engine;
 
+import java.util.List;
 import nz.ac.auckland.se281.model.Colour;
 
 public class LeastUsedStrategy implements Strategy {
+  List<Colour> humanGuesses;
+
+  public LeastUsedStrategy(List<Colour> humanGuesses) {
+    this.humanGuesses = humanGuesses;
+  }
 
   @Override
   public Colour chooseColour() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'chooseColour'");
+    return Colour.getRandomColourForAi();
   }
 
   @Override
   public Colour guessHumanColour() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'guessHumanColour'");
+
+    int[] counts = new int[Colour.values().length];
+
+    // Count how many times each colour appears
+    for (Colour guess : humanGuesses) {
+      counts[guess.ordinal()]++;
+    }
+
+    // Find the index of the least used colour in canonical order
+    int minIndex = 0;
+    for (int i = 1; i < counts.length; i++) {
+      if (counts[i] < counts[minIndex]) {
+        minIndex = i;
+      }
+    }
+
+    return Colour.values()[minIndex];
   }
-
-  //   /*As the name suggests, this strategy chooses the colour that the human has used least often
-  // during the current game. The idea behind this strategy is that the player will eventually use
-  // underused colours and avoid repeating the same ones too frequently.
-
-  //   If there are multiple colours that have been used the least, the AI will choose the one that
-  // comes first in the canonical order defined in the Colour class:
-  //   RED, GREEN, BLUE, YELLOW.
-
-  //   For example, if the player has used RED 3 times, GREEN 2 times, and BLUE and YELLOW 0 times,
-  // the AI will guess BLUE (since it comes before YELLOW in the order). */
-  // }
 }
