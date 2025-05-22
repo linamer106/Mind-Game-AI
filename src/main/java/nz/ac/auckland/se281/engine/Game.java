@@ -130,35 +130,35 @@ public class Game {
     }
   }
 
-  // private void updateStrategy() {
-  //   switch (difficulty) {
-  //     case MEDIUM:
-  //       if (roundNumber == 2) {
-  //         currentStrategy = new AvoidLastStrategy(humanColourChoice);
-  //         gameLevel.setStrategy(currentStrategy);
-  //       }
-  //       break;
-  //     case HARD:
-  //       if (roundNumber == 3) {
-  //         currentStrategy = new LeastUsedStrategy(humanChoiceHistory);
-  //         gameLevel.setStrategy(currentStrategy);
-  //         strategyChangedThisRound = true;
-  //       } else if (roundNumber >= 4 && !strategyChangedThisRound) {
-  //         // Switch strategy if lost last round
-  //         int lastRoundAiPoints = aiPoints - getPreviousAiPoints();
-  //         if (lastRoundAiPoints == 0) {
-  //           if (currentStrategy instanceof LeastUsedStrategy) {
-  //             currentStrategy = new AvoidLastStrategy(humanColourChoice);
-  //           } else {
-  //             currentStrategy = new LeastUsedStrategy(humanChoiceHistory);
-  //           }
-  //           gameLevel.setStrategy(currentStrategy);
-  //         }
-  //       }
-  //       strategyChangedThisRound = false;
-  //       break;
-  //   }
-  // }
+  private void updateStrategy() {
+    switch (difficulty) {
+      case MEDIUM:
+        if (roundNumber == 2) {
+          currentStrategy = new AvoidLastStrategy(humanColourChoice);
+          gameLevel.setStrategy(currentStrategy);
+        }
+        break;
+      case HARD:
+        if (roundNumber == 3) {
+          currentStrategy = new LeastUsedStrategy(humanChoiceHistory);
+          gameLevel.setStrategy(currentStrategy);
+          strategyChangedThisRound = true;
+        } else if (roundNumber >= 4 && !strategyChangedThisRound) {
+          // Switch strategy if lost last round
+          int lastRoundAiPoints = aiPoints - getPreviousAiPoints();
+          if (lastRoundAiPoints == 0) {
+            if (currentStrategy instanceof LeastUsedStrategy) {
+              currentStrategy = new AvoidLastStrategy(humanColourChoice);
+            } else {
+              currentStrategy = new LeastUsedStrategy(humanChoiceHistory);
+            }
+            gameLevel.setStrategy(currentStrategy);
+          }
+        }
+        strategyChangedThisRound = false;
+        break;
+    }
+  }
 
   private int getPreviousPlayerPoints() {
     return playerPoints - (roundNumber > 1 ? (playerPoints - getPreviousPlayerPoints()) : 0);
@@ -166,6 +166,29 @@ public class Game {
 
   private int getPreviousAiPoints() {
     return aiPoints - (roundNumber > 1 ? (aiPoints - getPreviousAiPoints()) : 0);
+  }
+
+  private void calculatePoints(
+      Colour humanColourChoice, Colour lastHumanGuess, Colour aiChoice, Colour aiGuess) {
+    // Calculate player points
+    int playerRoundPoints = 0; // this inside so how will it add up correctly??
+    if (lastHumanGuess == aiChoice) {
+      playerRoundPoints = 1;
+      if (powerColour != null && lastHumanGuess == powerColour) {
+        playerRoundPoints += 2;
+      }
+    }
+    playerPoints += playerRoundPoints;
+
+    // Calculate AI points
+    int aiRoundPoints = 0; // same Q here?
+    if (aiGuess == humanColourChoice) {
+      aiRoundPoints = 1;
+      if (powerColour != null && aiGuess == powerColour) {
+        aiRoundPoints += 2;
+      }
+    }
+    aiPoints += aiRoundPoints;
   }
 
   public void showStats() {}
