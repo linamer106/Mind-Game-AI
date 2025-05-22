@@ -112,6 +112,31 @@ public class Game {
     gameStarted = false;
   }
 
+  private List<Colour> getHumanInput() {
+    while (true) {
+      MessageCli.ASK_HUMAN_INPUT.printMessage();
+      String input = Utils.scanner.nextLine();
+      String[] parts = input.trim().split(" ");
+
+      if (parts.length != 2) {
+        MessageCli.INVALID_HUMAN_INPUT.printMessage();
+        continue;
+      }
+
+      Colour colour1 = Colour.fromInput(parts[0]);
+      Colour colour2 = Colour.fromInput(parts[1]);
+
+      if (colour1 == null || colour2 == null) {
+        MessageCli.INVALID_HUMAN_INPUT.printMessage();
+        continue;
+      }
+
+      return List.of(colour1, colour2);
+      // could List.of() here produce me issues later due to nullpointerexception and mod
+      // stuff?
+    }
+  }
+
   public void showStats() {}
 }
 ////      easyGame.gameStrategy(new leastsakdjasd)
