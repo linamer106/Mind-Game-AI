@@ -181,8 +181,6 @@ public class Main {
     } while (processCommand(command));
   }
 
-  
-
   private boolean processCommand(String input) {
     // Remove whitespace at the beginning and end of the input.
     input = input.trim();
@@ -268,7 +266,7 @@ public class Main {
     }
     return options;
   }
- 
+
   private boolean checkArgs(final Command command, final String[] args) {
     return command.getNumArgs() == args.length - 1;
   }

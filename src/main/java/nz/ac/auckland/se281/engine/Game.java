@@ -23,7 +23,6 @@ public class Game {
   private int playerPoints = 0;
   private int aiPoints = 0;
   private List<Colour> humanChoiceHistory = new ArrayList<>();
-  private Colour lastHumanChoice = null;
   private Colour powerColour = null;
 
   private List<Integer> playerPointsPerRound = new ArrayList<>();
@@ -41,7 +40,6 @@ public class Game {
     this.playerPoints = 0;
     this.aiPoints = 0;
     this.humanChoiceHistory.clear();
-    this.lastHumanChoice = null;
     this.powerColour = null;
     this.gameStarted = true;
 
@@ -78,11 +76,11 @@ public class Game {
     if (roundNumber % 3 == 0) {
       powerColour = Colour.getRandomColourForPowerColour();
       MessageCli.PRINT_POWER_COLOUR.printMessage(powerColour); // why can't do model.Colour?
+    } else {
+      powerColour = null;
     }
 
     calculatePoints(humanChoice, humanGuess, aiChoice, aiGuess);
-
-    updateStrategy();
 
     int playerRoundPoints = playerPointsPerRound.get(playerPointsPerRound.size() - 1);
     int aiRoundPoints = aiPointsPerRound.get(aiPointsPerRound.size() - 1);
@@ -91,10 +89,10 @@ public class Game {
     MessageCli.PRINT_OUTCOME_ROUND.printMessage(AI_NAME, aiRoundPoints);
 
     // Update for next round
-    lastHumanChoice = humanChoice;
     humanChoiceHistory.add(humanChoice);
 
-    roundNumber++;
+    roundNumber++; // why did bringing this above solve so many test cases?
+    updateStrategy();
 
     // Check if game ended
     if (roundNumber > numRounds) { // why again can i combine?
@@ -151,7 +149,9 @@ public class Game {
             >= 2) { // so the humanChoice chnages every time, corect implementation right? not just
           // ==2
           currentStrategy =
-              new AvoidLastStrategy(humanChoice); // how not this one as u use it next round??
+              new AvoidLastStrategy(
+                  humanChoiceHistory.get(
+                      humanChoiceHistory.size() - 1)); // how not this one as u use it next round??
           gameLevel.setStrategy(currentStrategy);
         }
         break;
@@ -163,7 +163,8 @@ public class Game {
           int lastRoundPoints = aiPointsPerRound.get(aiPointsPerRound.size() - 1);
           if (lastRoundPoints == 0) { // Lost last round
             if (currentStrategy instanceof LeastUsedStrategy) {
-              currentStrategy = new AvoidLastStrategy(lastHumanChoice);
+              currentStrategy =
+                  new AvoidLastStrategy(humanChoiceHistory.get(humanChoiceHistory.size() - 1));
             } else {
               currentStrategy = new LeastUsedStrategy(humanChoiceHistory);
             }
@@ -224,6 +225,8 @@ public class Game {
     // Update total points
     playerPoints += playerRoundPoints;
     aiPoints += aiRoundPoints;
+
+    // why isnt this working powerColour = null; // just added thissssss
   }
 
   public void showStats() {
