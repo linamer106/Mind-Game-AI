@@ -25,7 +25,6 @@ public class Game {
   private List<Colour> humanChoiceHistory = new ArrayList<>();
   private Colour lastHumanChoice = null;
   private Colour powerColour = null;
-  private boolean strategyWonLastRound = false;
 
   private List<Integer> playerPointsPerRound = new ArrayList<>();
   private List<Integer> aiPointsPerRound = new ArrayList<>();
@@ -69,9 +68,6 @@ public class Game {
     humanChoice = inputColours.get(0);
     humanGuess = inputColours.get(1);
 
-    updateStrategy();
-    humanChoiceHistory.add(humanChoice); // or needs to be above that line above?
-
     Colour aiChoice = currentStrategy.chooseColour();
     Colour aiGuess = currentStrategy.guessHumanColour();
 
@@ -86,6 +82,8 @@ public class Game {
 
     calculatePoints(humanChoice, humanGuess, aiChoice, aiGuess);
 
+    updateStrategy();
+
     int playerRoundPoints = playerPointsPerRound.get(playerPointsPerRound.size() - 1);
     int aiRoundPoints = aiPointsPerRound.get(aiPointsPerRound.size() - 1);
 
@@ -94,6 +92,8 @@ public class Game {
 
     // Update for next round
     lastHumanChoice = humanChoice;
+    humanChoiceHistory.add(humanChoice);
+
     roundNumber++;
 
     // Check if game ended
@@ -151,7 +151,7 @@ public class Game {
             >= 2) { // so the humanChoice chnages every time, corect implementation right? not just
           // ==2
           currentStrategy =
-              new AvoidLastStrategy(humanChoiceHistory.get(humanChoiceHistory.size() - 1));
+              new AvoidLastStrategy(humanChoice); // how not this one as u use it next round??
           gameLevel.setStrategy(currentStrategy);
         }
         break;
@@ -160,26 +160,16 @@ public class Game {
           currentStrategy = new LeastUsedStrategy(humanChoiceHistory);
           gameLevel.setStrategy(currentStrategy);
         } else if (roundNumber >= 4) {
-          // Check if the strategy won the last round
-          if (aiPointsPerRound.get(aiPointsPerRound.size() - 1) >= 1) {
-            strategyWonLastRound = true;
-          }
-
-          if (currentStrategy instanceof LeastUsedStrategy) {
-            if (!strategyWonLastRound) {
+          int lastRoundPoints = aiPointsPerRound.get(aiPointsPerRound.size() - 1);
+          if (lastRoundPoints == 0) { // Lost last round
+            if (currentStrategy instanceof LeastUsedStrategy) {
               currentStrategy = new AvoidLastStrategy(lastHumanChoice);
             } else {
-              break;
-            }
-          } else if (currentStrategy instanceof AvoidLastStrategy) {
-            if (!strategyWonLastRound) {
               currentStrategy = new LeastUsedStrategy(humanChoiceHistory);
-            } else {
-              break;
             }
           }
-          gameLevel.setStrategy(currentStrategy);
         }
+        gameLevel.setStrategy(currentStrategy);
         break;
     }
   }
