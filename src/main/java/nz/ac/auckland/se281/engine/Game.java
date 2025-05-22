@@ -72,10 +72,15 @@ public class Game {
       lastHumanGuess = inputColours.get(1);
       humanChoiceHistory.add(humanColourChoice);
 
-      ////////
-      gameLevel.setStrategy(new RandomStrategy());
-      ///
-      ///
+      // updateStrategy();
+
+      Colour aiChoice = currentStrategy.chooseColour();
+      Colour aiGuess = currentStrategy.guessHumanColour();
+
+      // print ai and player choices and guesses
+      MessageCli.PRINT_INFO_MOVE.printMessage(AI_NAME, aiChoice, aiGuess);
+      MessageCli.PRINT_INFO_MOVE.printMessage(namePlayer, humanColourChoice, lastHumanGuess);
+
       if (roundNumber % 3 == 0) {
         MessageCli.PRINT_POWER_COLOUR.printMessage(
             Colour.getRandomColourForPowerColour()); // why can't do model.Colour?
@@ -124,6 +129,36 @@ public class Game {
       // stuff?
     }
   }
+
+  // private void updateStrategy() {
+  //       switch (difficulty) {
+  //           case MEDIUM:
+  //               if (roundNumber == 2) {
+  //                   currentStrategy = new AvoidLastStrategy(lastHumanGuess);
+  //                   gameLevel.setStrategy(currentStrategy);
+  //               }
+  //               break;
+  //           case HARD:
+  //               if (roundNumber == 3) {
+  //                   currentStrategy = new LeastUsedStrategy(humanChoices);
+  //                   gameLevel.setStrategy(currentStrategy);
+  //                   strategyChangedThisRound = true;
+  //               } else if (roundNumber >= 4 && !strategyChangedThisRound) {
+  //                   // Switch strategy if lost last round
+  //                   int lastRoundAiPoints = aiPoints - getPreviousAiPoints();
+  //                   if (lastRoundAiPoints == 0) {
+  //                       if (currentStrategy instanceof LeastUsedStrategy) {
+  //                           currentStrategy = new AvoidLastStrategy(lastHumanGuess);
+  //                       } else {
+  //                           currentStrategy = new LeastUsedStrategy(humanChoices);
+  //                       }
+  //                       gameLevel.setStrategy(currentStrategy);
+  //                   }
+  //               }
+  //               strategyChangedThisRound = false;
+  //               break;
+  //       }
+  //   }
 
   public void showStats() {}
 }
