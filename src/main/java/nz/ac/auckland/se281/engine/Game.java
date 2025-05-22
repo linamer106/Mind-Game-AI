@@ -25,7 +25,7 @@ public class Game {
   private List<Colour> humanChoiceHistory = new ArrayList<>();
   private Colour lastHumanChoice = null;
   private Colour powerColour = null;
-  private boolean strategyChangedThisRound = false;
+  private boolean strategyWonLastRound = false;
 
   private List<Integer> playerPointsPerRound = new ArrayList<>();
   private List<Integer> aiPointsPerRound = new ArrayList<>();
@@ -68,9 +68,9 @@ public class Game {
 
     humanChoice = inputColours.get(0);
     humanGuess = inputColours.get(1);
-    humanChoiceHistory.add(humanChoice);
 
     updateStrategy();
+    humanChoiceHistory.add(humanChoice);
 
     Colour aiChoice = currentStrategy.chooseColour();
     Colour aiGuess = currentStrategy.guessHumanColour();
@@ -86,10 +86,11 @@ public class Game {
 
     calculatePoints(humanChoice, humanGuess, aiChoice, aiGuess);
 
-    // Print round outcome
-    MessageCli.PRINT_OUTCOME_ROUND.printMessage(
-        namePlayer, playerPoints - getPreviousPlayerPoints());
-    MessageCli.PRINT_OUTCOME_ROUND.printMessage(AI_NAME, aiPoints - getPreviousAiPoints());
+    int playerRoundPoints = playerPointsPerRound.get(playerPointsPerRound.size() - 1);
+    int aiRoundPoints = aiPointsPerRound.get(aiPointsPerRound.size() - 1);
+
+    MessageCli.PRINT_OUTCOME_ROUND.printMessage(namePlayer, playerRoundPoints);
+    MessageCli.PRINT_OUTCOME_ROUND.printMessage(AI_NAME, aiRoundPoints);
 
     // Update for next round
     lastHumanChoice = humanChoice;
@@ -146,7 +147,7 @@ public class Game {
       case EASY:
         return; // no strategy change
       case MEDIUM:
-        if (roundNumber == 2) {
+        if (roundNumber >= 2) { // so the humanChoice chnages every time, corect implementation?
           currentStrategy = new AvoidLastStrategy(humanChoice);
           gameLevel.setStrategy(currentStrategy);
         }
@@ -155,20 +156,27 @@ public class Game {
         if (roundNumber == 3) {
           currentStrategy = new LeastUsedStrategy(humanChoiceHistory);
           gameLevel.setStrategy(currentStrategy);
-          strategyChangedThisRound = true;
-        } else if (roundNumber >= 4 && !strategyChangedThisRound) {
-          // Switch strategy if lost last round
-          int lastRoundAiPoints = aiPoints - getPreviousAiPoints();
-          if (lastRoundAiPoints == 0) {
-            if (currentStrategy instanceof LeastUsedStrategy) {
+        } else if (roundNumber >= 4) {
+          // Check if the strategy won the last round
+          if (aiPointsPerRound.get(aiPointsPerRound.size() - 1) >= 1) {
+            strategyWonLastRound = true;
+          }
+
+          if (currentStrategy instanceof LeastUsedStrategy) {
+            if (!strategyWonLastRound) {
               currentStrategy = new AvoidLastStrategy(lastHumanChoice);
             } else {
-              currentStrategy = new LeastUsedStrategy(humanChoiceHistory);
+              break;
             }
-            gameLevel.setStrategy(currentStrategy);
+          } else if (currentStrategy instanceof AvoidLastStrategy) {
+            if (!strategyWonLastRound) {
+              currentStrategy = new LeastUsedStrategy(humanChoiceHistory);
+            } else {
+              break;
+            }
           }
         }
-        strategyChangedThisRound = false;
+        gameLevel.setStrategy(currentStrategy);
         break;
     }
   }
