@@ -1,14 +1,21 @@
 package nz.ac.auckland.se281.engine;
 
+import nz.ac.auckland.se281.model.Colour;
+
 public class EasyGame implements DifficultyLevel {
+  private RandomStrategy randomStrategy;
 
-  private Strategy strategy;
-
-  @Override
-  public void setStrategy(Strategy strategy) {
-    this.strategy = strategy;
+  public EasyGame() {
+    this.randomStrategy = new RandomStrategy();
   }
 
-  // Strategy strat = new RandomStrategy();
-  //   easyGame.setStrategy(strat);
+  @Override
+  public Colour aiMethodForGuessingHumanColour() {
+    return randomStrategy.guessHumanColour();
+  }
+
+  @Override
+  public Colour aiMethodForChoosingColour() {
+    return randomStrategy.chooseColour();
+  }
 }

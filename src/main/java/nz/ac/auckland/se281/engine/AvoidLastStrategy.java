@@ -5,8 +5,6 @@ import nz.ac.auckland.se281.model.Colour;
 public class AvoidLastStrategy implements Strategy {
   private Colour exclude;
 
-  // how to get this exclude colour?
-
   public AvoidLastStrategy(Colour exclude) {
     this.exclude = exclude;
   }

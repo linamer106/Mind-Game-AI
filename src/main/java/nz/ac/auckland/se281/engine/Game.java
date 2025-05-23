@@ -9,15 +9,14 @@ import nz.ac.auckland.se281.model.Colour;
 
 public class Game {
   public static final String AI_NAME = "HAL-9000";
-  private Difficulty difficulty;
   private int numRounds;
   private String[] options;
   private int roundNumber = 1;
   private Colour humanChoice;
   private Colour humanGuess;
   private String namePlayer;
-  private Strategy currentStrategy; // ok to be public?
   private DifficultyLevel gameLevel;
+  private Difficulty difficulty;
 
   private boolean gameStarted = false;
   private int playerPoints = 0;
@@ -28,9 +27,11 @@ public class Game {
   private List<Integer> playerPointsPerRound = new ArrayList<>();
   private List<Integer> aiPointsPerRound = new ArrayList<>();
 
+  // private GamesStats stats = new GamesStats();
+  // private Ai ai = new Ai(stats); // private?
+
   public void newGame(
       Difficulty difficulty, int numRounds, String[] options) { // what is in string options?
-    this.difficulty = difficulty;
     this.numRounds = numRounds;
     this.options = options;
     this.namePlayer = options[0];
@@ -40,11 +41,9 @@ public class Game {
     this.humanChoiceHistory.clear();
     this.powerColour = null;
     this.gameStarted = true;
+    this.difficulty = difficulty;
 
     MessageCli.WELCOME_PLAYER.printMessage(namePlayer);
-    gameLevel = GameFactory.chooseGameDifficulty(difficulty);
-    currentStrategy = new RandomStrategy(); // ok logic? or must keep original one ai?
-    gameLevel.setStrategy(currentStrategy);
   }
 
   public void play() {
@@ -64,8 +63,15 @@ public class Game {
     humanChoice = inputColours.get(0);
     humanGuess = inputColours.get(1);
 
-    Colour aiChoice = currentStrategy.chooseColour();
-    Colour aiGuess = currentStrategy.guessHumanColour();
+    Colour except =
+        humanChoiceHistory.isEmpty() ? null : humanChoiceHistory.get(humanChoiceHistory.size() - 1);
+    gameLevel =
+        GameFactory.chooseGameDifficulty(
+            difficulty, except, roundNumber, humanChoiceHistory, getAiWonLastRound());
+
+    // invoke game level method which checks strategy based on roundnumber and send back reuslt
+    Colour aiChoice = gameLevel.aiMethodForChoosingColour();
+    Colour aiGuess = gameLevel.aiMethodForGuessingHumanColour();
 
     // print ai and player choices and guesses
     MessageCli.PRINT_INFO_MOVE.printMessage(AI_NAME, aiChoice, aiGuess);
@@ -90,12 +96,24 @@ public class Game {
     humanChoiceHistory.add(humanChoice);
 
     roundNumber++; // why did bringing this above solve so many test cases?
-    updateStrategy();
 
     // Check if game ended
     if (roundNumber > numRounds) { // why again can i combine?
       endGame();
     }
+  }
+
+  public boolean getAiWonLastRound() {
+    if (aiPointsPerRound.isEmpty()) {
+      return false;
+    }
+
+    int lastRoundPoints = aiPointsPerRound.get(aiPointsPerRound.size() - 1);
+
+    if (lastRoundPoints == 0) {
+      return false;
+    }
+    return true;
   }
 
   private void endGame() {
@@ -139,41 +157,6 @@ public class Game {
     }
   }
 
-  private void updateStrategy() {
-    switch (difficulty) {
-      case EASY:
-        return; // no strategy change
-      case MEDIUM:
-        if (roundNumber
-            >= 2) { // so the humanChoice chnages every time, corect implementation right? not just
-          // ==2
-          currentStrategy =
-              new AvoidLastStrategy(
-                  humanChoiceHistory.get(
-                      humanChoiceHistory.size() - 1)); // how not this one as u use it next round??
-          gameLevel.setStrategy(currentStrategy);
-        }
-        break;
-      case HARD:
-        if (roundNumber == 3) {
-          currentStrategy = new LeastUsedStrategy(humanChoiceHistory);
-          gameLevel.setStrategy(currentStrategy);
-        } else if (roundNumber >= 4) {
-          int lastRoundPoints = aiPointsPerRound.get(aiPointsPerRound.size() - 1);
-          if (lastRoundPoints == 0) { // Lost last round
-            if (currentStrategy instanceof LeastUsedStrategy) {
-              currentStrategy =
-                  new AvoidLastStrategy(humanChoiceHistory.get(humanChoiceHistory.size() - 1));
-            } else {
-              currentStrategy = new LeastUsedStrategy(humanChoiceHistory);
-            }
-          }
-        }
-        gameLevel.setStrategy(currentStrategy);
-        break;
-    }
-  }
-
   private void calculatePoints(
       Colour humanChoice, Colour humanGuess, Colour aiChoice, Colour aiGuess) {
     // Calculate player points
@@ -214,4 +197,3 @@ public class Game {
     MessageCli.PRINT_PLAYER_POINTS.printMessage(AI_NAME, aiPoints);
   }
 }
-////      easyGame.gameStrategy(new leastsakdjasd)
