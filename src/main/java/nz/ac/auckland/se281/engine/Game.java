@@ -42,6 +42,7 @@ public class Game {
     this.powerColour = null;
     this.gameStarted = true;
     this.difficulty = difficulty;
+    this.gameLevel = null;
 
     MessageCli.WELCOME_PLAYER.printMessage(namePlayer);
   }
@@ -63,11 +64,30 @@ public class Game {
     humanChoice = inputColours.get(0);
     humanGuess = inputColours.get(1);
 
+    if (gameLevel == null) {
+      Colour except =
+          humanChoiceHistory.isEmpty()
+              ? null
+              : humanChoiceHistory.get(humanChoiceHistory.size() - 1);
+      gameLevel =
+          GameFactory.chooseGameDifficulty(
+              difficulty, except, roundNumber, humanChoiceHistory, getAiWonLastRound());
+    }
     Colour except =
         humanChoiceHistory.isEmpty() ? null : humanChoiceHistory.get(humanChoiceHistory.size() - 1);
-    gameLevel =
-        GameFactory.chooseGameDifficulty(
-            difficulty, except, roundNumber, humanChoiceHistory, getAiWonLastRound());
+
+    if (gameLevel instanceof HardGame) {
+      ((HardGame) gameLevel).setAiWonLastRound(getAiWonLastRound());
+      ((HardGame) gameLevel).setRoundNumber(roundNumber);
+      ((HardGame) gameLevel).setHumanChoiceHistory(humanChoiceHistory);
+      ((HardGame) gameLevel).setExcept(except);
+      // how to make this section neater? check rewind
+    }
+
+    if (gameLevel instanceof MediumGame) {
+      ((MediumGame) gameLevel).setExcept(except);
+      ((MediumGame) gameLevel).setRoundNumber(roundNumber);
+    }
 
     // invoke game level method which checks strategy based on roundnumber and send back reuslt
     Colour aiChoice = gameLevel.aiMethodForChoosingColour();

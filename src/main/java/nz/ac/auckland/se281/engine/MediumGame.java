@@ -4,14 +4,13 @@ import nz.ac.auckland.se281.model.Colour;
 
 public class MediumGame implements DifficultyLevel {
   private RandomStrategy randomStrategy;
-  private AvoidLastStrategy avoidLastStrategy;
 
   private Strategy currentStrategy;
   private int roundNumber;
+  private Colour except;
 
   public MediumGame(Colour except, int roundNumber) {
     this.randomStrategy = new RandomStrategy();
-    this.avoidLastStrategy = new AvoidLastStrategy(except);
     this.roundNumber = roundNumber;
     setStrategy(randomStrategy); // so need to call this every round?
   }
@@ -23,7 +22,8 @@ public class MediumGame implements DifficultyLevel {
   @Override
   public Colour aiMethodForGuessingHumanColour() {
     if (roundNumber >= 2) {
-      currentStrategy = avoidLastStrategy; // updates exclude???
+      currentStrategy = new AvoidLastStrategy(except);
+      ; // updates exclude???
       setStrategy(currentStrategy);
       return currentStrategy.guessHumanColour();
     } else {
@@ -35,5 +35,13 @@ public class MediumGame implements DifficultyLevel {
   @Override
   public Colour aiMethodForChoosingColour() {
     return randomStrategy.chooseColour();
+  }
+
+  public void setExcept(Colour except) {
+    this.except = except;
+  }
+
+  public void setRoundNumber(int roundNumber) {
+    this.roundNumber = roundNumber;
   }
 }
