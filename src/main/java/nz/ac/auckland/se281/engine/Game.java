@@ -92,6 +92,12 @@ public class Game {
     // invoke game level method which checks strategy based on roundnumber and send back reuslt
     Colour aiChoice = gameLevel.aiMethodForChoosingColour();
     Colour aiGuess = gameLevel.aiMethodForGuessingHumanColour();
+    // System.out.println(
+    //     "AI choice: "
+    //         + aiGuess
+    //         + "round: "
+    //         + roundNumber
+    //         + "////////////////////////////////////////");
 
     // print ai and player choices and guesses
     MessageCli.PRINT_INFO_MOVE.printMessage(AI_NAME, aiChoice, aiGuess);

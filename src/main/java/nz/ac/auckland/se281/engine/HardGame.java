@@ -32,16 +32,23 @@ public class HardGame implements DifficultyLevel {
       ;
       setStrategy(currentStrategy);
     } else if (roundNumber >= 4) {
+      Colour except = humanChoiceHistory.get(humanChoiceHistory.size() - 1);
       if (!aiWonLastRound) { // Lost last round
         if (currentStrategy instanceof LeastUsedStrategy) {
           currentStrategy = new AvoidLastStrategy(except);
         } else {
           currentStrategy = new LeastUsedStrategy(humanChoiceHistory);
-          ;
+        }
+      } else { // Won last round
+        if (currentStrategy instanceof AvoidLastStrategy) {
+          currentStrategy = new AvoidLastStrategy(except);
+        } else {
+          currentStrategy = new LeastUsedStrategy(humanChoiceHistory);
         }
       }
       setStrategy(currentStrategy);
     }
+
     return currentStrategy.guessHumanColour();
   }
 
