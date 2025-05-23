@@ -28,8 +28,6 @@ public class Game {
   private List<Integer> playerPointsPerRound = new ArrayList<>();
   private List<Integer> aiPointsPerRound = new ArrayList<>();
 
-  public Game() {}
-
   public void newGame(
       Difficulty difficulty, int numRounds, String[] options) { // what is in string options?
     this.difficulty = difficulty;
@@ -101,9 +99,10 @@ public class Game {
   }
 
   private void endGame() {
+    // when the game ends, show the final stats
     showStats();
     MessageCli.PRINT_END_GAME.printMessage();
-
+    // display winner based on who has more points or tie
     if (playerPoints > aiPoints) {
       MessageCli.PRINT_WINNER_GAME.printMessage(namePlayer);
     } else if (aiPoints > playerPoints) {
@@ -111,7 +110,7 @@ public class Game {
     } else {
       MessageCli.PRINT_TIE_GAME.printMessage();
     }
-
+    // reset game state
     gameStarted = false;
   }
 
@@ -173,29 +172,6 @@ public class Game {
         gameLevel.setStrategy(currentStrategy);
         break;
     }
-  }
-
-  private int getPreviousPlayerPoints() {
-    if (roundNumber <= 1) {
-      return 0; // No previous rounds before round 1
-    }
-    // Sum all points except current round
-    int sum = 0;
-    for (int i = 0; i < playerPointsPerRound.size() - 1; i++) {
-      sum += playerPointsPerRound.get(i);
-    }
-    return sum;
-  }
-
-  private int getPreviousAiPoints() {
-    if (roundNumber <= 1) {
-      return 0;
-    }
-    int sum = 0;
-    for (int i = 0; i < aiPointsPerRound.size() - 1; i++) {
-      sum += aiPointsPerRound.get(i);
-    }
-    return sum;
   }
 
   private void calculatePoints(
