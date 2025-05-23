@@ -7,12 +7,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 import nz.ac.auckland.se281.cli.MessageCli;
 import nz.ac.auckland.se281.cli.Utils;
 import nz.ac.auckland.se281.engine.Game;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
+import org.junit.rules.Timeout;
 
 /** You cannot modify this class! */
 public abstract class SysCliTest {
@@ -47,7 +50,7 @@ public abstract class SysCliTest {
   }
 
   /** Timeout if test runs longer than 10 seconds */
-  // @Rule public org.junit.rules.Timeout timeout = new Timeout(10, TimeUnit.SECONDS);
+  @Rule public org.junit.rules.Timeout timeout = new Timeout(10, TimeUnit.SECONDS);
 
   /**
    * Configures the test output and input streams, by creating new temporary streams while storing
