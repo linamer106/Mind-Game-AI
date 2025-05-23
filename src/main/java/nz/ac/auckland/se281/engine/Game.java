@@ -80,7 +80,7 @@ public class Game {
       ((HardGame) gameLevel).setAiWonLastRound(getAiWonLastRound());
       ((HardGame) gameLevel).setRoundNumber(roundNumber);
       ((HardGame) gameLevel).setHumanChoiceHistory(humanChoiceHistory);
-      ((HardGame) gameLevel).setExcept(except);
+      // ((HardGame) gameLevel).setExcept(except);
       // how to make this section neater? check rewind
     }
 

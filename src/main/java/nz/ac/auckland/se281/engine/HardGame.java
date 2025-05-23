@@ -9,7 +9,6 @@ public class HardGame implements DifficultyLevel {
 
   private Strategy currentStrategy;
   private int roundNumber;
-  private Colour except;
   private List<Colour> humanChoiceHistory;
 
   public HardGame(
@@ -67,9 +66,5 @@ public class HardGame implements DifficultyLevel {
 
   public void setHumanChoiceHistory(List<Colour> humanChoiceHistory) {
     this.humanChoiceHistory = humanChoiceHistory;
-  }
-
-  public void setExcept(Colour except) {
-    this.except = except;
   }
 }
