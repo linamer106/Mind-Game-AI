@@ -2,7 +2,7 @@
 
 A Java-based interactive Mind Game where a human player competes against an AI named HAL-9000 in a colour-guessing challenge. The game combines chance, strategy, and psychology, testing your ability to anticipate your opponent’s choices.
 
-**🎮 Game Overview**
+### **🎮 Game Overview**
 
 Each round:
 
@@ -18,17 +18,19 @@ Points are awarded:
 
 The game ends after a set number of rounds; the winner is the player with the highest score.
 
-**Colours**
+### **Colours**
+
 Available colours: RED, GREEN, BLUE, YELLOW (also accepts initials: R, G, B, Y).
 
-**AI Difficulty Levels**
+### **AI Difficulty Levels**
+
 EASY: Random guesses throughout.
 
 MEDIUM: Starts random, then switches to “Avoid Last” strategy.
 
 HARD: Starts random, then dynamically switches between “Least Used” and “Avoid Last” based on performance.
 
-**🛠️ Object-Oriented Design**
+### **🛠️ Object-Oriented Design**
 
 Strategy Pattern: Implements AI strategies (Random, AvoidLast, LeastUsed) with runtime switching via setStrategy().
 
@@ -36,7 +38,7 @@ Factory Pattern: Creates AI instances based on difficulty with a static factory 
 
 Includes interfaces and abstract classes to support flexible, extensible design.
 
-**💻 How to Run**
+### **💻 How to Run**
 
 Use the Maven wrapper:
 
@@ -46,7 +48,8 @@ Use the Maven wrapper:
  Windows
 .\mvnw.cmd clean compile exec:java@run
 
-**Commands**
+### **Commands**
+
 NEW_GAME <DIFFICULTY_LEVEL> <NUMBER_OF_ROUNDS> — Start a new game.
 
 PLAY — Play the next round.
@@ -59,7 +62,7 @@ EXIT — Exit the game.
 
 Commands are case-insensitive and accept underscores or hyphens interchangeably.
 
-**Example**
+### **Example**
 281-mind-game> new-game HARD 4
 What is your name?: Lina
 Welcome, Lina!
@@ -71,7 +74,7 @@ Player Lina: chose RED and guessed BLUE
 Player Lina earned 0 point(s) this round.
 Player HAL-9000 earned 1 point(s) this round.
 
-**✅ Features**
+### **✅ Features**
 AI adapts based on chosen difficulty.
 
 Dynamic scoring with Power Colour bonus.
