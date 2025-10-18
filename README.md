@@ -1,4 +1,4 @@
-**Mind Game (Guess Colours)**
+# Mind Game (Guess Colours)
 
 A Java-based interactive Mind Game where a human player competes against an AI named HAL-9000 in a colour-guessing challenge. The game combines chance, strategy, and psychology, testing your ability to anticipate your opponent’s choices.
 
@@ -40,10 +40,10 @@ Includes interfaces and abstract classes to support flexible, extensible design.
 
 Use the Maven wrapper:
 
-# Unix/Mac
+ Unix/Mac
 ./mvnw clean compile exec:java@run
 
-# Windows
+ Windows
 .\mvnw.cmd clean compile exec:java@run
 
 **Commands**
